@@ -7,10 +7,9 @@ class debug_facebook_tokens {
 
 	public function __construct($config){
 
-		parent::__construct();
-
 		$this->setAppId($config['appId']);
    	 	$this->setApiSecret($config['secret']);
+
 
 	}
 	
@@ -29,15 +28,13 @@ class debug_facebook_tokens {
 		return $this;
 	}
 
-
 	private function __access_token_http_call($access_token, $app_access_token)
 	{
-
-		$url = "https://graph.facebook.com/debug_token?input_token=".$app_access_token."&access_token=" . $access_token;
+		$url = "https://graph.facebook.com/debug_token?input_token=".$access_token."&access_token=" . $app_access_token;
 
 		$result = $this->__get_url($url);
 
-		return json_decode($result);
+		return $result[0];
 	}
 
 	private function __get_url( $url,  $javascript_loop = 0, $timeout = 5 )
@@ -93,11 +90,11 @@ class debug_facebook_tokens {
 	private function __get_app_access_token()
 	{	
 
-		$client_id = $this->$appId;
+		$client_id = $this->appId;
 		$client_secret = $this->apiSecret;
 
 		$url = "https://graph.facebook.com/oauth/access_token";
-		$postString = "client_id=$client_id&client_secret=$client_secret&type=client_cred";
+		$postString = "client_id=$client_id&client_secret=$client_secret&grant_type=client_credentials";
 
 		//
 		//grab the curl stuff
@@ -113,6 +110,8 @@ class debug_facebook_tokens {
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $postString);
 		
 		$response = curl_exec($curl);
+
+		echo $response;
 		$error = curl_error($curl);
 		
 		curl_close ($curl);	
